@@ -1,0 +1,40 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar y Ejecutar TypeScript",
+            "dependsOrder": "sequence",
+            "dependsOn": ["Compilar TypeScript", "Ejecutar"]
+        },
+        {
+            "label": "Compilar TypeScript",
+            "type": "shell",
+            "command": "npx",
+            "args": [
+                "tsc","--outDir", "dist"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "silent"
+            }
+        },
+        {
+            "label": "Ejecutar",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "src/server.js"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
