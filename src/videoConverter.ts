@@ -5,7 +5,7 @@ export class VideoConverter {
 		VideoConverter.ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 	}
 
-	static convertVideo(inputPath: string) {
+	static async convertVideo(inputPath: string): Promise<void> {
         const outputPath  = this.getOutputFormat(inputPath)
 
 		VideoConverter.ffmpeg(inputPath)

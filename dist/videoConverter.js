@@ -6,7 +6,7 @@ class VideoConverter {
     constructor() {
         VideoConverter.ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
     }
-    static convertVideo(inputPath) {
+    static async convertVideo(inputPath) {
         const outputPath = this.getOutputFormat(inputPath);
         VideoConverter.ffmpeg(inputPath)
             .output(outputPath + ".mp4")

@@ -3,42 +3,47 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const videoConverter_1 = require("./videoConverter");
 const express = require('express');
 const fs = require('fs');
+const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 const app = express();
 const port = 3000;
+const upload = multer({ dest: 'uploads/' });
 const videoDirectory = path.join(__dirname, './videos');
 app.use(cors());
 app.use('./videos', express.static(videoDirectory));
 // Ruta para cargar un video
-app.post('/upload', (req, res) => {
-    const videoName = req.body.name;
-    const videoData = req.body.data;
-    fs.writeFile(path.join(videoDirectory, videoName), videoData, (err) => {
-        if (err) {
-            console.error('Error al guardar el video:', err);
-            res.status(500).send('Error al guardar el video');
+app.post('/upload', upload.single('video'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('No se proporcionó ningún archivo');
+    }
+    const videoPath = req.file.path; // Ruta temporal del archivo de video
+    const targetPath = path.join(__dirname, 'videos', req.file.originalname); // Ruta donde se guardará el archivo
+    // Leer el archivo de video desde su ruta temporal
+    fs.readFile(videoPath, (readErr, data) => {
+        if (readErr) {
+            console.error('Error al leer el archivo:', readErr);
+            return res.status(500).send('Error al leer el archivo');
         }
-        else {
-            console.log('Video guardado correctamente');
-            res.send('Video guardado correctamente');
-        }
+        // Guardar el archivo de video en el directorio de videos
+        fs.writeFile(targetPath, data, (writeErr) => {
+            if (writeErr) {
+                console.error('Error al guardar el archivo:', writeErr);
+                return res.status(500).send('Error al guardar el archivo');
+            }
+        });
     });
-    videoConverter_1.VideoConverter.convertVideo(videoName);
-});
-// Ruta para obtener un video
-app.get('/videos/:videoName', (req, res) => {
-    const videoName = req.params.videoName;
-    // Verificar si el video existe
-    fs.access(path.join(videoDirectory, videoName), fs.constants.F_OK, (err) => {
-        if (err) {
-            console.error('El video no existe:', err);
-            res.status(404).send('El video no existe');
-        }
-        else {
-            // Enviar el video al cliente
-            res.sendFile(path.join(videoDirectory, videoName));
-        }
+    console.log('Video guardado correctamente');
+    videoConverter_1.VideoConverter.convertVideo(targetPath).then(_ => {
+        fs.access(path.join(videoDirectory, "blob.mp4"), fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error('El video no existe:', err);
+                res.status(404).send('El video no existe');
+            }
+            else {
+                res.sendFile(path.join(videoDirectory, "blob.mp4"));
+            }
+        });
     });
 });
 // Iniciar el servidor
