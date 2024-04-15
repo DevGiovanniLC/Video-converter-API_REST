@@ -8,45 +8,26 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 const port = 3000;
-const upload = multer({ dest: 'uploads/' });
-const videoDirectory = path.join(__dirname, './videos');
+const upload = multer({ dest: __dirname + '/uploads/' });
 app.use(cors());
-app.use('./videos', express.static(videoDirectory));
-// Ruta para cargar un video
+app.use('./videos', express.static("dist/uploads/"));
 app.post('/upload', upload.single('video'), (req, res) => {
     if (!req.file) {
-        return res.status(400).send('No se proporcionó ningún archivo');
+        return res.status(400).send(' No file was uploaded');
     }
-    const videoPath = req.file.path; // Ruta temporal del archivo de video
-    const targetPath = path.join(__dirname, 'videos', req.file.originalname); // Ruta donde se guardará el archivo
-    // Leer el archivo de video desde su ruta temporal
-    fs.readFile(videoPath, (readErr, data) => {
+    const videoPath = req.file.path;
+    const convertedTargetPath = path.join(videoPath + ".mp4");
+    fs.readFile(videoPath, async (readErr) => {
         if (readErr) {
-            console.error('Error al leer el archivo:', readErr);
-            return res.status(500).send('Error al leer el archivo');
+            console.error('Error when reading file:', readErr);
+            return res.status(500).send('Error when reading file');
         }
-        // Guardar el archivo de video en el directorio de videos
-        fs.writeFile(targetPath, data, (writeErr) => {
-            if (writeErr) {
-                console.error('Error al guardar el archivo:', writeErr);
-                return res.status(500).send('Error al guardar el archivo');
-            }
-        });
-    });
-    console.log('Video guardado correctamente');
-    videoConverter_1.VideoConverter.convertVideo(targetPath).then(_ => {
-        fs.access(path.join(videoDirectory, "blob.mp4"), fs.constants.F_OK, (err) => {
-            if (err) {
-                console.error('El video no existe:', err);
-                res.status(404).send('El video no existe');
-            }
-            else {
-                res.sendFile(path.join(videoDirectory, "blob.mp4"));
-            }
+        console.log('Video saved successfully:' + videoPath);
+        videoConverter_1.VideoConverter.convertVideo(videoPath, () => {
+            res.sendFile(convertedTargetPath);
         });
     });
 });
-// Iniciar el servidor
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
 });

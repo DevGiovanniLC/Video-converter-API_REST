@@ -5,17 +5,18 @@ export class VideoConverter {
 		VideoConverter.ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 	}
 
-	static async convertVideo(inputPath: string): Promise<void> {
+	static convertVideo(inputPath: string, func: Function): void {
         const outputPath  = this.getOutputFormat(inputPath)
 
 		VideoConverter.ffmpeg(inputPath)
 			.output(outputPath+".mp4")
 			.format("mp4") 
 			.on("end", () => {
-				console.log("Conversión completa");
+				console.log("Video converted:"+outputPath);
+				func()
 			})
 			.on("error", (err) => {
-				console.error("Error al convertir el archivo:", err);
+				console.error("Error while converting:", err);
 			})
 			.run();
 	}
