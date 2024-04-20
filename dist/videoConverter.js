@@ -2,15 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VideoConverter = void 0;
 class VideoConverter {
-    static ffmpeg = require("fluent-ffmpeg");
     constructor() {
         VideoConverter.ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
     }
-    static convertVideo(inputPath, func) {
+    static convertVideo(inputPath, format, func) {
         const outputPath = this.getOutputFormat(inputPath);
         VideoConverter.ffmpeg(inputPath)
             .output(outputPath + ".mp4")
-            .format("mp4")
+            .format(format)
             .on("end", () => {
             console.log("Video converted:" + outputPath);
             func();
@@ -25,3 +24,4 @@ class VideoConverter {
     }
 }
 exports.VideoConverter = VideoConverter;
+VideoConverter.ffmpeg = require("fluent-ffmpeg");
