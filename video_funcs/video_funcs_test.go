@@ -5,8 +5,15 @@ import (
 )
 
 func TestConvertVideo(t *testing.T) {
-	err := ConvertVideo("testing_assets/test",  "mp4")
+
+	var fileList  []string ;
+
+	fileList = append(fileList, "testing_assets/video.mkv")
+
+	err := ConvertVideo(fileList,  "mp4")
+
 	if err != nil {
 		t.Error("TestConvertVideo", err)
 	}
+	
 }

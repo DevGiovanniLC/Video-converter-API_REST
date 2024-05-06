@@ -4,7 +4,15 @@ import (
 	"os/exec"
 )
 
-func ConvertVideo(inputPath string,  outputPath string) error  {
-    cmd := exec.Command("./bin/ffmpeg", "-i", inputPath, outputPath)
+func ConvertVideo(inputPaths []string, format string) error  {
+	var command = "./bin/ffmpeg"
+
+	for _, inputPath := range inputPaths {
+		outputPath := inputPath + "." + format
+		command = command + " -i " + inputPath + " " + outputPath
+	}
+	
+    cmd := exec.Command(command)
+
     return cmd.Run()
 }
