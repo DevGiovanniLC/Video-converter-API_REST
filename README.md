@@ -1,1 +1,1 @@
-## Enlace de descarga del compilado de go en windows, con ffmpeg [descargar aquí]([https://drive.google.com/file/d/1hCxaxqX0uSwo1jEURxO4rYADgZI0zu6C/view?usp=sharing](https://drive.google.com/file/d/1OIxVoR7q2M36d0t845AZnbPW1DBlovb4/view?usp=sharing)
+## Enlace de descarga del compilado de go en windows, con ffmpeg [descargar aquí](https://drive.google.com/file/d/1OIxVoR7q2M36d0t845AZnbPW1DBlovb4/view?usp=sharing)
